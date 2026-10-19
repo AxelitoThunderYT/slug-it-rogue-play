@@ -461,6 +461,7 @@ function shake(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return
 function hpFx(){const now=performance.now();G.hh=G.hh||[];G.hh.push([now,G.hp]);while(G.hh.length&&now-G.hh[0][0]>1000)G.hh.shift();let mx=0;for(const x of G.hh)if(x[1]>mx)mx=x[1];if(mx-G.hp>1500&&now-(G.shk||0)>1200){G.shk=now;shake()}document.body.classList.toggle('lowhp',G.scr==='b'&&G.hp>0&&G.hp/maxhp()<.05)}
 function build(){
   if(document.body.classList.contains('phone'))G.elp='o';
+  fsPre();
   const e=G.en;
   $('#app').innerHTML=`<div class="top"><div><div class="mu" id="ph"></div>${hbH(HB1,100,'pb')}</div>
   <div class="ctr"><div class="hd" id="tm" style="font-size:22px"></div><button class="sm" style="background:#f28c28;color:#fff;font-weight:bold" onclick="pause()">⏸ Pausa</button></div><div class="${isBoss()?'boss':''}"><div class="mu" style="text-align:right" id="eh"></div>${hbH(isBoss()?HB3:HB2,100,'eb')}</div></div>
@@ -568,6 +569,35 @@ function launchFx(p){const o=p.o,mine=o==='p',opp=mine?'e':'p',lv=p.lv,ex=p.ext,
     if(mine&&c==='p')spawnSp('tx',3,10*du+2,lv);if(mine&&c==='&')spawnSp('wt',3,10*du+2,lv)}}
 function addCh(s,g){if(s.st>=s.lv)return;s.ch+=g*(s.fu?100/s.fc:1);
   while(s.ch>=100&&s.st<s.lv){s.st++;chSnd(s.st);s.ch=s.st>=s.lv?100:s.ch-100;if(s.st===3||s.fu)s.fl=Math.random()<(S[s.id].cr?.125:.0625)*(s.it==='agu'?2:1)?1:0}}
+
+// ===== Animación de disparo de fusión (pantalla completa) =====
+const FSU='https://raw.githubusercontent.com/AxelitoThunderYT/Slug-It-Rogue/refs/heads/main/images/animations/fusion_shot_cartel.gif';let FSI=null;
+function fsPre(){if(FSI&&!(FSI.complete&&!FSI.naturalWidth))return;try{FSI=new Image();FSI.src=FSU}catch(e){FSI=null}}
+function fsReady(){if(!FSI)fsPre();else if(FSI.complete&&!FSI.naturalWidth)fsPre();return !!FSI&&FSI.complete&&FSI.naturalWidth>0}
+(()=>{const go=()=>{try{const c=navigator.connection;if(c&&(c.saveData||/2g/.test(c.effectiveType||'')))return}catch(e){}fsPre()};addEventListener('load',()=>setTimeout(go,2500))})();
+function fsDmg(T){const X=SD.p;let t=0;const r=(k,v)=>{if(X[k]>0)t+=v*Math.min(T,X[k])};
+  r('b',30);r('m',18);r('a',ADPS.p);r('k',40);if(X.t>0)t+=(14+Math.max(0,7-X.t)*9)*Math.min(T,X.t);
+  if(RG.p>0)t+=50*Math.min(T,RG.p);
+  for(const k in G.sp){const q=G.sp[k];if(q.k==='mn'&&q.t<=T)t+=50*q.lv}
+  (G.bmT||[]).forEach(b=>{if(b.t<=T)t+=50*b.lv});
+  const nc=G.bd.filter(v=>v===10||v===11).length;if(nc>0){const mx=nc<=3?nc/3*100:nc<=5?100+(nc-3)*50:200+(nc-5)*100,tk=Math.floor(((G.ntk||0)+T)/2);t+=tk*Math.round(mx*Math.min(1,((G.nt||0)+T)/20))}
+  return t}
+function fsOK(s,dm,vm){
+  if(!fsReady()||G.scr!=='b'||G.fsa)return false;
+  const e=G.en;let d=dm;if(e.mod>=0&&e.mod<5&&elsOf(s).includes(e.mod))d=Math.round(d/2);
+  if(e.hp>d)return false;                                   // 1: el disparo remata al rival
+  const L=P.filter(p=>!p.d&&!p.mini);
+  if(L.filter(p=>p.o==='e'&&p.lv>=3).length>=2)return false; // 2: dos babosas nv3 rivales en camino
+  if(L.some(p=>p.o==='p'))return false;                      // 5: otras babosas tuyas volando
+  const Tf=83/(45*(vm||1)*.576);                             // tiempo de vuelo del disparo de fusión
+  const mul=G.en.mod===9?2:1;
+  if(L.some(p=>p.o==='e'&&p.dmg*mul>=G.hp&&(p.x-12)/Math.max(1,p.v*.576)<=Tf*1.33+.5))return false; // 3: rival letal que llega antes
+  if(fsDmg(Tf*1.33+1)>=G.hp)return false;                    // 4: trampas que te matarían pronto
+  return true}
+function fsCine(cb){G.fsa=1;G.pz=1;const o=document.createElement('div');o.id='fsc';o.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;pointer-events:all;touch-action:none';
+  const i=document.createElement('img');i.src=FSU;i.style.cssText='max-width:100vw;max-height:100vh;object-fit:contain;pointer-events:none';o.appendChild(i);document.body.appendChild(o);
+  o.addEventListener('pointerdown',e=>e.stopPropagation(),true);
+  setTimeout(()=>{o.remove();G.fsa=0;if(!G.pzs&&!document.getElementById('ov'))G.pz=0;cb()},1750)}
 function launch(i){
   const s=G.sl[i],d=S[s.id];if(s.st<1||G.scr!=='b'||G.pz)return;
   if(SD.p.s>0){msg='¡Electrocutado! No puedes lanzar babosas';return}
@@ -582,8 +612,8 @@ function launch(i){
   if(G.en.mod===11)G.hp-=Math.round(dmg*.05);
   if(SD.p.g>0)G.en.es.forEach(x=>x.ch=Math.min(100,x.ch+[0,20,40,65][lv]));
   const o={si:i,ab:s.it==='sup'?'':d.ab,ext:(s.it==='ext'?1.5:1)*(FUSEXT[s.id]||1),vm,gt:s.it==='gaf',arc:s.it==='arc',met:s.it==='met'?s.met:0,fu:!!s.fu,pri:s.it==='pri',corr:s.it==='cor',hon:s.it==='hon',mut:s.it==='mut',cri:s.it==='cri',smo:s.it==='smo',lum:s.it==='lum',mand:s.it==='man',pil:s.it==='pil',imm:s.it==='tal',vdec:s.it==='vel'};
-  proj('p',s.id,d.n==='Estropeada'?0:lv,Math.round(dmg*[1,1.5,2,3][G.up.l]),cr,{...o,els:elsOf(s)});
-  chk();upd()}
+  const fdm=Math.round(dmg*[1,1.5,2,3][G.up.l]),go=()=>{proj('p',s.id,d.n==='Estropeada'?0:lv,fdm,cr,{...o,els:elsOf(s)});chk();upd()};
+  if(s.fu&&fsOK(s,fdm,vm))fsCine(go);else go()}
 function proj(o,id,lv,dmg,cr,x={}){const d=id?S[id]:null,n=document.createElement('div');n.className='pj'+(x.mini?' m':'');
   if(d){n.style.background=CL[d.el]||'#999';n.innerHTML=ic(d,'pi')+'<b>'+lv+'</b>'}
   n.style.top=(o==='p'?58:42)+'%';$('#fld')?.appendChild(n);
@@ -981,7 +1011,7 @@ function exitAsk(back){ov(`<h2 style="margin:0 0 8px">¿Volver al menú?</h2><p>
 function goMenu(){G.pz=0;clearInterval(tick);ov();G.scr='m';render()}
 // ===== Pausa y menús superpuestos =====
 function ov(h,side){let o=$('#ov');if(!h){o?.remove();return}if(!o){o=document.createElement('div');o.id='ov';document.body.appendChild(o)}o.className=side||'';o.dataset.k='';o.innerHTML=side==='scene'?h:'<div class="card">'+h+'</div>'}
-function pause(){G.pz=1;ov(`<h2 style="margin:0 0 8px">Pausa</h2><div class="col"><button onclick="G.pz=0;ov()">Continuar</button><button class="g" onclick="partida()">Partida (objetos)</button><button class="g" onclick="openSet()">⚙️ Ajustes</button><button class="g" onclick="exitAsk('pause()')">Salir al menú</button></div>`)}
+function pause(){if(G.fsa)return;G.pz=1;ov(`<h2 style="margin:0 0 8px">Pausa</h2><div class="col"><button onclick="G.pz=0;ov()">Continuar</button><button class="g" onclick="partida()">Partida (objetos)</button><button class="g" onclick="openSet()">⚙️ Ajustes</button><button class="g" onclick="exitAsk('pause()')">Salir al menú</button></div>`)}
 function partida(back){ov(`<div class="row"><h2 style="margin:0">Partida</h2><button class="g sm" onclick="${G.scr==='b'?'pause()':'ov()'}">Volver</button></div>
  <div class="card boss" style="display:flex;gap:16px;align-items:center">${bimg(120)}<div><b>Jefe del piso ${G.f+1}: ${bi()[0]}</b><div style="margin-top:6px">${lc(bi()[1])}</div></div></div><b>Equipamiento (${G.eq.length})</b>${G.eq.map(id=>{const q=EQ.find(x=>x.id===id);return `<div class="card" style="margin:4px 0"><b>${q.n}</b><div class="mu">${q.d}</div></div>`}).join('')||'<div class="mu">Aún no tienes equipamiento.</div>'}
  <b>Artefactos pasivos (${G.art.length}/${maxA()})</b><div class="artg" style="--n:${maxA()}">${Array.from({length:maxA()},(_,i)=>{const id=G.art[i];if(!id)return '<div class="arts e"><div class="artim"></div><div class="mu">Ranura vacía</div></div>';const o=oi(id);return `<div class="arts"><div class="artim">${oe(o)}</div><b>${o.n}</b><div class="mu">${o.d}</div>${G.scr==='s'?`<button class="g sm" onclick="sellA(${i})">Vender ${Math.ceil(o.p/2)}$</button>`:''}</div>`}).join('')}</div>`,'big')}
