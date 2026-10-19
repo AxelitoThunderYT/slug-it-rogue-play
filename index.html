@@ -597,7 +597,8 @@ function fsOK(s,dm,vm){
 function fsCine(cb){G.fsa=1;G.pz=1;const o=document.createElement('div');o.id='fsc';o.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;pointer-events:all;touch-action:none';
   const i=document.createElement('img');i.src=FSU;i.style.cssText='max-width:100vw;max-height:100vh;object-fit:contain;pointer-events:none';o.appendChild(i);document.body.appendChild(o);
   o.addEventListener('pointerdown',e=>e.stopPropagation(),true);
-  setTimeout(()=>{o.remove();G.fsa=0;if(!G.pzs&&!document.getElementById('ov'))G.pz=0;cb()},1750)}
+  let st=0;const end=()=>{o.remove();G.fsa=0;if(!G.pzs&&!document.getElementById('ov'))G.pz=0;cb()},begin=()=>{if(st)return;st=1;setTimeout(()=>{i.style.visibility='hidden';setTimeout(end,60)},1630)};
+  if(i.complete)requestAnimationFrame(()=>requestAnimationFrame(begin));else i.onload=()=>requestAnimationFrame(begin);setTimeout(begin,1200)}
 function launch(i){
   const s=G.sl[i],d=S[s.id];if(s.st<1||G.scr!=='b'||G.pz)return;
   if(SD.p.s>0){msg='¡Electrocutado! No puedes lanzar babosas';return}
