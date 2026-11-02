@@ -1573,7 +1573,46 @@ function achTick(){if(!achOn()||!(G.scr==='b'||G.scr==='s'))return;if(G.sl.filte
 setInterval(achTick,1000);
 function achOb(id){if(!achOn())return;if(/^Elemental/.test(id))achv('leg');if(Object.keys(STATS.sl).filter(k=>BASE.includes(k)).length>=BASE.length)achv('col')}
 function achSell(s){if(s.id==='Enigma')achv('insens');if(s.fu){const f=FU.find(q=>q[0]===s.id);if(f&&S[f[1]].r===3&&S[f[2]].r===3)achv('aura')}}
-function achH(){const done=ACHL.filter(a=>ACHV[a[0]]).length,colN=Object.keys(STATS.sl).filter(k=>BASE.includes(k)).length;return`<h2>🏆 Logros</h2><p class="mu">${done}/${ACHL.length} desbloqueados</p>${ACHL.map(a=>{const u=ACHV[a[0]];return`<div class="hwc" style="opacity:${u||a[3]?1:.55}${u?';border-color:#3ddc84;box-shadow:0 0 0 1px #3ddc84':''}"><div class="hwi">${u?'🏆':a[3]?'🔒':'⏳'}</div><div><b>${a[1]}</b><div class="mu" style="margin-top:2px">${a[2]}${a[0]==='col'&&!u?' ('+colN+'/'+BASE.length+')':''}${!a[3]?' <i>— Aún no disponible.</i>':''}</div></div></div>`}).join('')}<button style="width:100%;margin-top:8px;background:#f28c28;color:#fff" onclick="G.scr='m';render()">Volver</button>`}
+const ACHB='https://raw.githubusercontent.com/AxelitoThunderYT/Slug-It-Rogue/refs/heads/main/images/advancements/';let ACHF='all';
+const ACHCSS=`body.lgp:not(.phone) #app{max-width:min(1180px,96vw)}
+.lgx{display:flex;flex-direction:column;gap:14px;padding-bottom:18px}
+.lgt{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.lgt h2{margin:0;font-size:clamp(24px,4.6vw,34px);letter-spacing:1px}
+.lgbar{flex:1 1 100%;display:flex;align-items:center;gap:12px;background:linear-gradient(#2a2548,#201c33);border:2px solid var(--ln);border-radius:14px;padding:12px 16px}
+.lgbar .n{font-size:clamp(22px,4vw,30px);color:#f5c542;text-shadow:0 2px 0 #5a3a00;white-space:nowrap}.lgbar .n small{font-size:.55em;color:var(--mu);text-shadow:none}
+.lgbar .tr{flex:1;height:16px;background:#14121f;border:2px solid var(--ln);border-radius:10px;overflow:hidden}.lgbar .tr i{display:block;height:100%;background:linear-gradient(90deg,#3ddc84,#f5c542);border-radius:8px;transition:width .6s}
+.lgbar .pc{min-width:48px;text-align:right;color:var(--mu);font-size:14px}
+.lgf{display:flex;gap:8px;flex-wrap:wrap}.lgf button{flex:1 1 0;min-width:110px;margin:0;padding:10px 12px;background:#201c33;border:2px solid var(--ln);color:var(--mu);border-radius:12px;font:inherit;font-size:14px;cursor:pointer;transition:.15s}
+.lgf button.on{background:#f5c542;border-color:#f5c542;color:#1a1530}.lgf button:hover:not(.on){border-color:#6a5fb0;color:var(--tx)}
+.lgg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.lgc{position:relative;display:flex;gap:14px;align-items:center;padding:12px;background:linear-gradient(135deg,#252040,#1b1730);border:2px solid var(--ln);border-radius:16px;overflow:hidden;transition:transform .15s,border-color .15s}
+.lgc:hover{transform:translateY(-2px);border-color:#6a5fb0}
+.lgc .im{flex:none;position:relative;width:88px;height:88px;border-radius:14px;overflow:hidden;border:3px solid #3a3360;background:#14121f}
+.lgc .im img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .3s}
+.lgc .tx{min-width:0;flex:1}.lgc b{display:block;font-size:16px;line-height:1.15;margin-bottom:4px;color:var(--tx)}.lgc p{margin:0;font-size:13px;line-height:1.35;color:var(--mu);font-family:system-ui,sans-serif}
+.lgc .st{display:inline-block;margin-top:7px;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:#14121f;color:var(--mu);border:1px solid var(--ln)}
+.lgc .pr{margin-top:7px;height:8px;background:#14121f;border-radius:6px;overflow:hidden;border:1px solid var(--ln)}.lgc .pr i{display:block;height:100%;background:#f5c542}
+.lgc.lk .im img{filter:grayscale(1) brightness(.45) contrast(1.1)}.lgc.lk .im:after{content:"";position:absolute;inset:0;background:radial-gradient(circle,#0000 30%,#0009)}
+.lgc.lk b{color:#cfc8ee}
+.lgc.lk .lkI{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}.lgc.lk .lkI svg{width:30px;height:30px;filter:drop-shadow(0 2px 0 #000a)}
+.lgc.ok{border-color:#3ddc84;background:linear-gradient(135deg,#1f3a3a,#1b2a30);box-shadow:0 0 0 1px #3ddc8466,0 0 22px #3ddc8433}
+.lgc.ok .im{border-color:#f5c542;box-shadow:0 0 14px #f5c54288}
+.lgc.ok .st{background:#3ddc84;color:#0d2a1a;border-color:#3ddc84}
+.lgc.ok:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#f5c542,transparent)}
+.lgc.so{opacity:.6}.lgc.so .st{color:#c9a255;border-color:#6b5524}
+.lgn{grid-column:1/-1;text-align:center;color:var(--mu);padding:30px 0}
+.lgb{margin-top:4px;width:100%}
+@media (max-width:560px){.lgg{grid-template-columns:1fr}.lgc .im{width:76px;height:76px}.lgf button{min-width:0;font-size:13px;padding:9px 6px}}
+@media (prefers-reduced-motion:reduce){.lgc,.lgbar .tr i{transition:none}}`;
+const LKSVG='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" fill="#0007"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function achFil(f){ACHF=f;render()}
+function achH(){if(!document.getElementById('achcss')){const st=document.createElement('style');st.id='achcss';st.textContent=ACHCSS;document.head.appendChild(st)}
+const done=ACHL.filter(a=>ACHV[a[0]]).length,tot=ACHL.length,colN=Object.keys(STATS.sl).filter(k=>BASE.includes(k)).length,pc=Math.round(done/tot*100);
+const list=ACHL.map((a,i)=>({a,i,u:!!ACHV[a[0]]})).filter(x=>ACHF==='all'||(ACHF==='ok'?x.u:!x.u));
+const tabs=[['all','Todos',tot],['ok','Obtenidos',done],['no','Pendientes',tot-done]].map(t=>`<button class="${ACHF===t[0]?'on':''}" onclick="achFil('${t[0]}')">${t[1]} (${t[2]})</button>`).join('');
+const cards=list.map(({a,i,u})=>{const soon=!a[3]&&!u;const stx=u?'Desbloqueado':soon?'Próximamente':'Bloqueado';
+ const pr=a[0]==='col'&&!u?`<div class="pr"><i style="width:${Math.round(colN/BASE.length*100)}%"></i></div><div class="mu" style="font-size:11px;margin-top:3px">${colN}/${BASE.length} babosas</div>`:'';
+ return`<div class="lgc ${u?'ok':'lk'}${soon?' so':''}"><div class="im"><img src="${ACHB+(i+1)}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'">${u?'':`<div class="lkI">${LKSVG}</div>`}</div><div class="tx"><b>${a[1]}</b><p>${a[2]}</p>${pr}<span class="st">${stx}</span></div></div>`}).join('');
+return`<div class="lgx"><div class="lgt"><h2>Logros</h2><div class="lgbar"><span class="n">${done}<small> / ${tot}</small></span><div class="tr"><i style="width:${pc}%"></i></div><span class="pc">${pc}%</span></div></div><div class="lgf">${tabs}</div><div class="lgg">${cards||'<div class="lgn">No hay logros en esta categoría.</div>'}</div><button class="lgb" style="background:#f28c28;color:#fff" onclick="G.scr='m';render()">Volver</button></div>`}
 const PNAMES=['Perfil 1','Perfil 2','Perfil 3'];
 function profData(n){const g=k=>{try{return JSON.parse(localStorage.getItem(k+(n?'_'+n:''))||'null')}catch(e){return null}};return{st:g('sirst'),ac:g('sirach'),wm:g('sirwm')}}
 function profH(){return`<h2>Perfiles</h2><p class="mu">Cada perfil guarda sus propias estadísticas, logros y estrellas. Los ajustes son compartidos entre perfiles.</p>${[0,1,2].map(n=>{const d=profData(n),ach=d.ac?Object.keys(d.ac).length:0,sl=d.st&&d.st.sl?Object.keys(d.st.sl).length:0,stars=d.wm?Object.keys(d.wm).filter(k=>BASE.includes(k.split(':')[1])).length:0;return`<div class="hwc" style="${n===PROF?'border-color:#f5c542':''}"><div class="hwi"><i class="pxi prof${n?n:''}" style="--ps:3.6px;margin:0 auto"></i></div><div style="flex:1"><b>${PNAMES[n]}${n===PROF?' (activo)':''}</b><div class="mu">🏆 ${ach}/${ACHL.length} · 🐌 ${sl}/${BASE.length} · ⭐ ${stars}/${3*BASE.length}</div></div><div style="display:flex;flex-direction:column;gap:4px">${n===PROF?'':`<button class="sm" onclick="setProf(${n})">Usar</button>`}<button class="g sm" onclick="resetOv(${n})">Resetear progreso</button></div></div>`}).join('')}<button style="width:100%;margin-top:8px;background:#f28c28;color:#fff" onclick="G.scr='m';render()">Volver</button>`}
@@ -2013,7 +2052,7 @@ let SDO=0;
 function sdTog(on){SDO=on===undefined?!SDO:on;const p=document.getElementById('sdp'),b=document.getElementById('sdb');if(p)p.classList.toggle('on',!!SDO);if(b)b.classList.toggle('on',!!SDO)}
 function sdGoTo(f){sdTog(0);setTimeout(f,120)}
 
-function render(){mbg(G.scr==='m');document.body.classList.toggle('duel',G.scr==='b');document.body.classList.toggle('shop',G.scr==='s');document.body.classList.toggle('mmenu',G.scr==='m');document.body.classList.toggle('pdp',G.scr==='pd');if(G.scr==='s')saveRun('s');if(G.scr!=='m')document.body.classList.remove('plov');if(G.scr!=='b'){document.body.classList.remove('lowhp');document.body.classList.remove('lowtime')}fitLand();langBtn();if(G.scr==='b')return upd();const A=$('#app');let h='';
+function render(){mbg(G.scr==='m');document.body.classList.toggle('duel',G.scr==='b');document.body.classList.toggle('shop',G.scr==='s');document.body.classList.toggle('mmenu',G.scr==='m');document.body.classList.toggle('pdp',G.scr==='pd');document.body.classList.toggle('lgp',G.scr==='lg');if(G.scr==='s')saveRun('s');if(G.scr!=='m')document.body.classList.remove('plov');if(G.scr!=='b'){document.body.classList.remove('lowhp');document.body.classList.remove('lowtime')}fitLand();langBtn();if(G.scr==='b')return upd();const A=$('#app');let h='';
   if(G.scr==='m'){h=`<div class="ctr"><img class="mlogo" src="${LOGO}" style="width:min(86%,420px);margin:10px 0 0"></div><p class="ctr mu mdesc">¡Combina fichas y hazte con babosas poderosas para completar todas las rondas en cada uno de los ocho pisos y hacerte con la victoria!</p>
   ${pxB('pxj play','play','Jugar','playOv()')}
   <div class="row mrow">${pxB('pxc pedia','pedia','Babosapedia','pdOpen()','flex:1')}${pxB('pxc set','set','Ajustes',"G.scr='st';render()",'flex:1')}${pxB('pxc help','help','Cómo jugar',"G.scr='hp';render()",'flex:1')}</div><div class="row mrow" style="margin-top:8px">${pxB('pxh stats','stats','Estadísticas',"G.scr='sts';render()",'flex:1')}</div>${tipH()}<div class="msp" style="height:56px"></div>`}
